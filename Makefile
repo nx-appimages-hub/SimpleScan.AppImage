@@ -11,27 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 PWD:=$(shell pwd)
 
-all:
-	rm -rf $(PWD)/build
-	mkdir -p $(PWD)/build
-	mkdir -p $(PWD)/build/AppDir
+all: clean
+	mkdir --parents $(PWD)/build/Boilerplate.AppDir
+	apprepo --destination=$(PWD)/build appdir boilerplate simple-scan libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libreadline8 libwebp6
 
+	echo "exec \$${APPDIR}/bin/simple-scan \"\$${@}\"" >> $(PWD)/build/Boilerplate.AppDir/AppRun
 
-	wget --output-document=$(PWD)/build/build.rpm  https://download-ib01.fedoraproject.org/pub/epel/8/Everything/x86_64/Packages/s/simple-scan-3.36.2.1-1.el8.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.desktop | true
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.png | true
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.svg | true	
 
-	wget --output-document=$(PWD)/build/build.rpm  http://mirror.centos.org/centos/8/AppStream/x86_64/os/Packages/cairo-1.15.12-3.el8.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
+	cp --force $(PWD)/AppDir/*.svg $(PWD)/build/Boilerplate.AppDir 			| true	
+	cp --force $(PWD)/AppDir/*.png $(PWD)/build/Boilerplate.AppDir 			| true	
+	cp --force $(PWD)/AppDir/*.desktop $(PWD)/build/Boilerplate.AppDir 		| true	
 
-	wget --output-document=$(PWD)/build/build.rpm  http://mirror.centos.org/centos/8/AppStream/x86_64/os/Packages/libwebp-1.0.0-1.el8.x86_64.rpm
-	cd $(PWD)/build && rpm2cpio $(PWD)/build/build.rpm | cpio -idmv && cd ..
-
-
-	glib-compile-schemas $(PWD)/build/usr/share/glib-2.0/schemas
-	cp -r $(PWD)/build/usr/* $(PWD)/build/AppDir
-	cp -r $(PWD)/AppDir/* $(PWD)/build/AppDir
-
-	export ARCH=x86_64 && $(PWD)/bin/appimagetool-x86_64.AppImage $(PWD)/build/AppDir $(PWD)/SimpleScan.AppImage
+	export ARCH=x86_64 && $(PWD)/bin/appimagetool.AppImage $(PWD)/build/Boilerplate.AppDir $(PWD)/SimpleScan.AppImage
 	@echo "done: SimpleScan.AppImage"
 	make clean
 
