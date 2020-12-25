@@ -26,8 +26,7 @@ all: clean
 	cp --force $(PWD)/AppDir/*.desktop $(PWD)/build/Boilerplate.AppDir 		| true	
 
 	export ARCH=x86_64 && $(PWD)/bin/appimagetool.AppImage $(PWD)/build/Boilerplate.AppDir $(PWD)/SimpleScan.AppImage
-	@echo "done: SimpleScan.AppImage"
-	make clean
+	chmod +x $(PWD)/SimpleScan.AppImage
 
 
 clean:
